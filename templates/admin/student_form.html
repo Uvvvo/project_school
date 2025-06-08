@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">{% if student %}تعديل طالب{% else %}إضافة طالب جديد{% endif %}</h2>
+    
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.full_name.label(class="form-label") }}
+                    {{ form.full_name(class="form-control") }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.mother_name.label(class="form-label") }}
+                    {{ form.mother_name(class="form-control") }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    {{ form.birth_date.label(class="form-label") }}
+                    {{ form.birth_date(class="form-control", type="date") }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    {{ form.gender.label(class="form-label") }}
+                    {{ form.gender(class="form-select") }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    {{ form.student_type.label(class="form-label") }}
+                    {{ form.student_type(class="form-select") }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    {{ form.class_name.label(class="form-label") }}
+                    {{ form.class_name(class="form-control") }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    {{ form.section.label(class="form-label") }}
+                    {{ form.section(class="form-control") }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    {{ form.academic_year.label(class="form-label") }}
+                    {{ form.academic_year(class="form-control") }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            {{ form.profile_pic.label(class="form-label") }}
+            {{ form.profile_pic(class="form-control") }}
+            <div class="form-text">اختياري - يفضل صورة بحجم 200x200 بكسل</div>
+            
+            {% if student and student.profile_pic %}
+            <div class="mt-2">
+                <img src="{{ url_for('static', filename=student.profile_pic) }}" width="100" class="img-thumbnail">
+                <div class="form-check mt-2">
+                    <input class="form-check-input" type="checkbox" name="remove_pic" id="remove_pic">
+                    <label class="form-check-label" for="remove_pic">حذف الصورة الحالية</label>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">حفظ</button>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">إلغاء</a>
+    </form>
+</div>
+{% endblock %}

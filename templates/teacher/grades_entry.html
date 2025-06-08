@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">إدخال درجات الطلاب</h2>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="subject" class="form-label">المادة:</label>
+                    <select id="subject" class="form-select">
+                        <option value="">اختر المادة</option>
+                        <option value="islamic">التربية الإسلامية</option>
+                        <option value="arabic">اللغة العربية</option>
+                        <option value="english">اللغة الانكليزية</option>
+                        <option value="math">الرياضيات</option>
+                        <option value="science">العلوم</option>
+                        <option value="social">الاجتماعيات</option>
+                        <option value="art">الفنية</option>
+                        <option value="sport">الرياضة</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="class_name" class="form-label">الصف:</label>
+                    <select id="class_name" class="form-select">
+                        <option value="">اختر الصف</option>
+                        <option value="الصف الأول">الصف الأول</option>
+                        <option value="الصف الثاني">الصف الثاني</option>
+                        <option value="الصف الثالث">الصف الثالث</option>
+                        <option value="الصف الرابع">الصف الرابع</option>
+                        <option value="الصف الخامس">الصف الخامس</option>
+                        <option value="الصف السادس">الصف السادس</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-2">
+                    <label for="section" class="form-label">القسم:</label>
+                    <select id="section" class="form-select">
+                        <option value="">اختر القسم</option>
+                        <option value="أ">أ</option>
+                        <option value="ب">ب</option>
+                        <option value="ج">ج</option>
+                        <option value="د">د</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-2">
+                    <label for="exam_type" class="form-label">نوع التقييم:</label>
+                    <select id="exam_type" class="form-select">
+                        <option value="monthly">شهري</option>
+                        <option value="midterm">نصف فصل</option>
+                        <option value="final">نهائي</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-2 d-flex align-items-end">
+                    <button id="load-students" class="btn btn-primary w-100">عرض الطلاب</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="students-container" class="d-none">
+        <h3 id="class-title" class="mb-3"></h3>
+        
+        <form method="POST" id="grades-form" action="{{ url_for('save_grades') }}">
+            <input type="hidden" name="subject" id="form-subject">
+            <input type="hidden" name="class_name" id="form-class">
+            <input type="hidden" name="section" id="form-section">
+            <input type="hidden" name="exam_type" id="form-exam-type">
+            
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>اسم الطالب</th>
+                            <th>الدرجة (0-100)</th>
+                            <th>ملاحظات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-list">
+                        <!-- سيتم ملؤه بالطلاب عبر JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <button type="submit" class="btn btn-success mt-3">حفظ الدرجات</button>
+        </form>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loadBtn = document.getElementById('load-students');
+    const studentsContainer = document.getElementById('students-container');
+    const studentsList = document.getElementById('students-list');
+    const classTitle = document.getElementById('class-title');
+    
+    loadBtn.addEventListener('click', function() {
+        const subject = document.getElementById('subject').value;
+        const class_name = document.getElementById('class_name').value;
+        const section = document.getElementById('section').value;
+        const exam_type = document.getElementById('exam_type').value;
+        
+        if (!subject || !class_name || !section) {
+            alert('يرجى اختيار المادة والصف والقسم');
+            return;
+        }
+        
+        // تعبئة الحقول المخفية للنموذج
+        document.getElementById('form-subject').value = subject;
+        document.getElementById('form-class').value = class_name;
+        document.getElementById('form-section').value = section;
+        document.getElementById('form-exam-type').value = exam_type;
+        
+        // جلب الطلاب من الخادم
+        fetch(`/get_students?class_name=${encodeURIComponent(class_name)}&section=${encodeURIComponent(section)}`)
+            .then(response => response.json())
+            .then(students => {
+                if (students.length === 0) {
+                    studentsList.innerHTML = '<tr><td colspan="3" class="text-center">لا يوجد طلاب في هذا الصف والقسم</td></tr>';
+                } else {
+                    studentsList.innerHTML = '';
+                    students.forEach(student => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${student.full_name}</td>
+                            <td>
+                                <input type="number" step="0.01" min="0" max="100" 
+                                       name="grade_${student.id}" 
+                                       placeholder="0-100" class="form-control grade-input">
+                            </td>
+                            <td>
+                                <input type="text" name="notes_${student.id}" 
+                                       placeholder="ملاحظات (اختياري)" class="form-control">
+                            </td>
+                        `;
+                        studentsList.appendChild(row);
+                    });
+                }
+                
+                classTitle.textContent = `طلاب ${class_name} - قسم ${section}`;
+                studentsContainer.classList.remove('d-none');
+            });
+    });
+    
+    // منع ظهور رسائل خطأ عند ترك الحقول فارغة
+    document.querySelectorAll('.grade-input').forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.value === '') return;
+            const value = parseFloat(this.value);
+            if (isNaN(value) || value < 0 || value > 100) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,108 @@
+:root {
+    --primary: #3498db;
+    --secondary: #2c3e50;
+    --success: #27ae60;
+    --danger: #e74c3c;
+    --warning: #f39c12;
+    --info: #1abc9c;
+    --light: #f8f9fa;
+    --dark: #343a40;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+}
+
+header {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.nav-link {
+    transition: all 0.3s;
+}
+
+.nav-link:hover {
+    color: #fff !important;
+    transform: translateY(-2px);
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.table th {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn {
+    border-radius: 5px;
+    padding: 8px 20px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+}
+
+.form-control, .form-select {
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.attendance-container, .grades-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* تصميم خاص للواجهة العربية */
+[dir="rtl"] .form-floating > label {
+    right: auto;
+    left: 0;
+    transform-origin: top right;
+}
+
+/* تنسيقات لوحة المطور */
+.admin-card {
+    transition: all 0.3s;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.admin-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+}
